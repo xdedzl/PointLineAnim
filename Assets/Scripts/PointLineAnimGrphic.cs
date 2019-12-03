@@ -6,10 +6,11 @@ public class PointLineAnimGrphic : MonoBehaviour
     [SerializeField]
     private int pointCount = 10;
     public float distance = 50;
-    public Color PointColor = Color.white;
-    public Color LineColor = Color.white;
+    public Color pointColor = Color.white;
+    public Color lineColor = Color.white;
+    public float speed = 1;
 
-    private List<Vector2> m_Points;
+    private List<Point> m_Points;
     private int screenWidth;
     private int screenHeight;
 
@@ -53,11 +54,12 @@ public class PointLineAnimGrphic : MonoBehaviour
             return;
         }
 
-        m_Points = new List<Vector2>();
+        m_Points = new List<Point>();
         screenWidth = Screen.width;
         screenHeight = Screen.height;
 
-        material = new Material(Shader.Find("Standard"));
+        material = new Material(Shader.Find("RunTimeHandles/VertexColor"));
+        material.color = Color.white;
 
         for (int i = 0; i < pointCount; i++)
         {
@@ -67,29 +69,31 @@ public class PointLineAnimGrphic : MonoBehaviour
 
     private void GeneratePoint()
     {
-        Vector2Int vector = new Vector2Int(Random.Range(0, 200), Random.Range(0, 200));
+        Point vector = new Point(Random.Range(0, Screen.width), Random.Range(0, Screen.height));
         m_Points.Add(vector);
     }
 
     private void Update()
     {
+        Vector3 mousePos = Input.mousePosition;
         for (int i = 0; i < m_Points.Count; i++)
         {
-            m_Points[i] += new Vector2(Random.Range(-1, 2), Random.Range(-1, 2));
+            m_Points[i].OnUpdate(speed, mousePos);
         } 
     }
 
     private void OnPostRender()
     {
+        material.SetPass(0);
         GL.LoadPixelMatrix();
 
         GL.Begin(GL.LINES);
-        GL.Color(LineColor);
+        GL.Color(lineColor);
         foreach (var p1 in m_Points)
         {
             foreach (var p2 in m_Points)
             {
-                if (Vector2.Distance(p1, p2) < distance)
+                if (Point.Distance(p1, p2) < distance)
                 {
                     GL.Vertex(p1);
                     GL.Vertex(p2);
