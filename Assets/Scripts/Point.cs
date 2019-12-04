@@ -34,25 +34,26 @@ public class Point
     public void OnUpdate(float speed, Vector3 mousePos)
     {
         float dis = Dis(mousePos);
+        speed = speed * (1 / dis);
 
         if (dis < 100)
         {
             if(mousePos.x > x)
             {
-                x += speed * dis / 0.1f;
+                x += speed;
             }
             else
             {
-                x -= speed * dis / 0.1f;
+                x -= speed;
             }
 
             if (mousePos.y > y)
             {
-                y += speed * dis / 0.1f;
+                y += speed;
             }
             else
             {
-                y -= speed * dis / 0.1f;
+                y -= speed;
             }
         }
         else
